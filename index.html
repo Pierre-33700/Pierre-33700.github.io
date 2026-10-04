@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Comparateur de forfaits</title>
+  <meta name="description" content="Trouvez un forfait mobile ou une box internet équivalent à votre offre actuelle, mais moins cher, et soyez alerté quand une meilleure offre apparaît.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="entete">
+    <div class="conteneur entete-inner">
+      <h1 class="logo">Comparateur <span>de forfaits</span></h1>
+      <nav class="onglets" aria-label="Navigation principale">
+        <button type="button" class="onglet actif" data-vue="comparer">Comparer</button>
+        <button type="button" class="onglet" data-vue="alertes">Mes alertes <span id="nb-alertes" class="compteur" hidden></span></button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="conteneur">
+    <div id="bandeau-alertes" class="bandeau" hidden></div>
+
+    <!-- Vue : comparateur -->
+    <section id="vue-comparer" class="vue">
+      <div class="segment" role="tablist" aria-label="Catégorie">
+        <button type="button" role="tab" class="segment-btn actif" data-categorie="mobile">📱 Forfait mobile</button>
+        <button type="button" role="tab" class="segment-btn" data-categorie="internet">🏠 Internet fixe</button>
+      </div>
+
+      <form id="formulaire" class="carte" autocomplete="off" onsubmit="return false">
+        <h2>1. Votre forfait actuel</h2>
+        <div class="grille-champs">
+          <label class="champ champ-large">
+            <span>Choisir dans le catalogue <small>(pré-remplit les caractéristiques)</small></span>
+            <select id="catalogue"></select>
+          </label>
+          <label class="champ">
+            <span>Opérateur</span>
+            <input id="operateur" type="text" placeholder="ex. Orange">
+          </label>
+          <label class="champ">
+            <span>Nom de l'offre</span>
+            <input id="nom" type="text" placeholder="ex. Forfait 80 Go">
+          </label>
+          <label class="champ">
+            <span>Prix payé actuellement <small>(€ / mois)</small></span>
+            <input id="prix" type="number" min="0" step="0.01" inputmode="decimal" placeholder="ex. 24,99" required>
+          </label>
+        </div>
+
+        <h2>2. Caractéristiques et importance pour vous</h2>
+        <p class="aide">Vérifiez les caractéristiques de votre forfait, puis indiquez ce qui est
+          <strong>indispensable</strong> (l'offre proposée doit être au moins aussi bien),
+          <strong>secondaire</strong> (un plus, utilisé pour classer les offres) ou
+          <strong>indifférent</strong>.</p>
+        <div class="criteres-entete" aria-hidden="true">
+          <span>Caractéristique</span><span>Votre forfait</span><span>Importance</span>
+        </div>
+        <div id="criteres"></div>
+      </form>
+
+      <section class="carte" aria-labelledby="titre-resultats">
+        <div class="resultats-entete">
+          <h2 id="titre-resultats">3. Offres équivalentes moins chères</h2>
+          <div class="reglages">
+            <label class="champ champ-inline">
+              <span>Coût calculé sur</span>
+              <select id="horizon">
+                <option value="12">12 mois</option>
+                <option value="24">24 mois</option>
+              </select>
+            </label>
+            <label class="champ champ-inline">
+              <span>Trier par</span>
+              <select id="tri">
+                <option value="correspondance">Meilleure correspondance</option>
+                <option value="economie">Plus grosse économie</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <div id="resume"></div>
+        <ol id="resultats" class="resultats"></ol>
+
+        <div id="zone-alerte" class="zone-alerte" hidden>
+          <h3>🔔 Être alerté d'une baisse de prix</h3>
+          <p class="aide">Enregistrez ce forfait et vos critères : à chaque visite (et à chaque mise à jour du catalogue),
+            le comparateur vérifie s'il existe une offre qui vous fait économiser au moins le montant choisi.</p>
+          <div class="ligne-alerte">
+            <label class="champ champ-inline">
+              <span>Économie minimale</span>
+              <input id="seuil" type="number" min="0" step="0.5" value="3" inputmode="decimal">
+              <span>€ / mois</span>
+            </label>
+            <button type="button" id="creer-alerte" class="bouton">Créer l'alerte</button>
+          </div>
+          <p id="alerte-ok" class="succes" hidden></p>
+        </div>
+      </section>
+    </section>
+
+    <!-- Vue : alertes -->
+    <section id="vue-alertes" class="vue" hidden>
+      <div class="carte">
+        <h2>Mes alertes de prix</h2>
+        <p class="aide">Les alertes sont enregistrées dans ce navigateur. Activez les notifications pour être
+          prévenu même sans regarder cette page.</p>
+        <p><button type="button" id="activer-notifs" class="bouton secondaire">Activer les notifications</button>
+          <span id="etat-notifs" class="aide"></span></p>
+        <ul id="liste-alertes" class="liste-alertes"></ul>
+      </div>
+    </section>
+
+    <p class="avertissement" id="statut-donnees"></p>
+  </main>
+
+  <script src="data/offres-mobile.js"></script>
+  <script src="data/offres-internet.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
