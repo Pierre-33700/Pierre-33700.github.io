@@ -169,6 +169,21 @@ input[type="number"] { width: 100%; }
 
 .avertissement { font-size: .8rem; color: var(--texte-doux); text-align: center; margin: 8px 0 32px; }
 
+/* Énergie */
+.segment-sous { display: flex; width: fit-content; }
+.champ-unite { display: flex; align-items: center; gap: 8px; font-weight: 400; white-space: nowrap; }
+.champ-unite input { min-width: 0; }
+.import { margin-top: 16px; padding: 14px; border: 1px dashed var(--bord); border-radius: 10px; }
+.import-titre { margin: 0 0 8px; font-weight: 600; }
+.import-ligne { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.import-ligne input[type="file"] { max-width: 100%; font: inherit; }
+.import .resume { margin-bottom: 8px; }
+.info { margin-top: 10px; font-size: .9rem; color: var(--texte-doux); }
+.info summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+.info ul { padding-left: 20px; }
+.prefs { display: grid; gap: 8px; }
+.offre-prix .economie + .detail { margin-top: 2px; }
+
 /* Mobile */
 @media (max-width: 680px) {
   .grille-champs { grid-template-columns: minmax(0, 1fr); }

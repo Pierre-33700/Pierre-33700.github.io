@@ -7,6 +7,7 @@
   // Configuration des catégories.
   // Pour ajouter un nouveau type de produit (énergie, assurance…), il suffit
   // d'ajouter une entrée ici et un fichier de données dans data/.
+  // (L'énergie, dont le coût dépend de la consommation, a son propre module : js/energie.js.)
   //
   // Types de critères :
   //   min      plus c'est grand, mieux c'est (data, débit)
@@ -465,12 +466,20 @@
 
   function changerCategorie(idCat) {
     etat.categorie = idCat;
-    $$('.segment-btn').forEach((b) => {
+    $$('.segment-btn[data-categorie]').forEach((b) => {
       b.classList.toggle('actif', b.dataset.categorie === idCat);
       b.setAttribute('aria-selected', b.dataset.categorie === idCat);
     });
-    afficherFormulaire();
-    afficherResultats();
+    // L'énergie a son propre formulaire (js/energie.js) : le coût dépend de la consommation.
+    const energie = idCat === 'energie';
+    $('#bloc-forfaits').hidden = energie;
+    $('#bloc-energie').hidden = !energie;
+    if (energie) {
+      window.Energie.afficher();
+    } else {
+      afficherFormulaire();
+      afficherResultats();
+    }
     sauvegarder();
   }
 
@@ -479,7 +488,7 @@
   // ---------------------------------------------------------------------------
   function init() {
     $$('.onglet').forEach((b) => b.addEventListener('click', () => changerVue(b.dataset.vue)));
-    $$('.segment-btn').forEach((b) => b.addEventListener('click', () => changerCategorie(b.dataset.categorie)));
+    $$('.segment-btn[data-categorie]').forEach((b) => b.addEventListener('click', () => changerCategorie(b.dataset.categorie)));
 
     $('#catalogue').addEventListener('change', (e) => {
       choisirOffreCatalogue(e.target.value);

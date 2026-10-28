@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Comparateur de forfaits</title>
-  <meta name="description" content="Trouvez un forfait mobile ou une box internet équivalent à votre offre actuelle, mais moins cher, et soyez alerté quand une meilleure offre apparaît.">
+  <title>Comparateur de forfaits et d'énergie</title>
+  <meta name="description" content="Trouvez un forfait mobile, une box internet ou une offre d'électricité et de gaz équivalente à votre offre actuelle, mais moins chère.">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -26,8 +26,10 @@
       <div class="segment" role="tablist" aria-label="Catégorie">
         <button type="button" role="tab" class="segment-btn actif" data-categorie="mobile">📱 Forfait mobile</button>
         <button type="button" role="tab" class="segment-btn" data-categorie="internet">🏠 Internet fixe</button>
+        <button type="button" role="tab" class="segment-btn" data-categorie="energie">⚡ Énergie</button>
       </div>
 
+      <div id="bloc-forfaits">
       <form id="formulaire" class="carte" autocomplete="off" onsubmit="return false">
         <h2>1. Votre forfait actuel</h2>
         <div class="grille-champs">
@@ -98,6 +100,124 @@
           <p id="alerte-ok" class="succes" hidden></p>
         </div>
       </section>
+      </div>
+
+      <!-- Énergie : électricité et gaz -->
+      <div id="bloc-energie" hidden>
+        <div class="segment segment-sous" role="tablist" aria-label="Type d'énergie">
+          <button type="button" role="tab" class="segment-btn actif" data-energie="electricite">⚡ Électricité</button>
+          <button type="button" role="tab" class="segment-btn" data-energie="gaz">🔥 Gaz naturel</button>
+        </div>
+
+        <form id="form-energie" class="carte" autocomplete="off" onsubmit="return false">
+          <h2>1. Votre consommation</h2>
+          <div class="grille-champs">
+            <label class="champ">
+              <span id="e-libelle-conso">Consommation annuelle</span>
+              <span class="champ-unite"><input id="e-conso" type="number" min="0" step="1" inputmode="numeric" placeholder="ex. 4500"> kWh / an</span>
+            </label>
+            <label class="champ" data-elec>
+              <span>Puissance souscrite</span>
+              <select id="e-puissance"></select>
+            </label>
+            <label class="champ" data-elec>
+              <span>Option tarifaire</span>
+              <select id="e-option">
+                <option value="base">Base</option>
+                <option value="hc">Heures pleines / creuses</option>
+              </select>
+            </label>
+            <label class="champ" data-hc>
+              <span>Part de conso en heures creuses <small>(%)</small></span>
+              <input id="e-parthc" type="number" min="0" max="100" step="1" inputmode="numeric">
+            </label>
+          </div>
+
+          <div class="import">
+            <p class="import-titre">…ou importez votre historique de consommation</p>
+            <div class="import-ligne">
+              <input id="e-fichier" type="file" accept=".csv,.txt,.json,text/csv,application/json" aria-label="Fichier de consommation">
+              <label class="champ champ-inline">
+                <span>Unité du fichier</span>
+                <select id="e-unite">
+                  <option value="auto">Détection automatique</option>
+                  <option value="kWh">kWh</option>
+                  <option value="Wh">Wh</option>
+                  <option value="W">W (puissance moyenne)</option>
+                </select>
+              </label>
+            </div>
+            <p id="e-import-resultat" class="resume" hidden></p>
+            <details class="info">
+              <summary>Où trouver mon fichier ? Peut-on retrouver mon offre avec mon PDL ?</summary>
+              <ul>
+                <li><strong>Électricité</strong> : sur votre espace client Enedis (« Mes données »), téléchargez votre consommation
+                  quotidienne ou à la demi-heure au format CSV. Votre fournisseur propose aussi souvent un export dans son espace client.</li>
+                <li><strong>Gaz</strong> : sur votre espace client GRDF, exportez l'historique de consommation (CSV).</li>
+                <li>Le fichier est lu <strong>dans votre navigateur</strong> : il n'est envoyé à aucun serveur.
+                  Une année complète donne l'estimation la plus fiable.</li>
+                <li><strong>PDL / PCE</strong> : ces numéros de 14 chiffres (sur votre facture) ne permettent pas, à eux seuls, de
+                  retrouver votre fournisseur ni votre offre. Ces informations ne sont accessibles qu'avec votre consentement via
+                  les API d'Enedis / GRDF, ce qui nécessite un serveur dédié. Choisissez donc votre offre actuelle ci-dessous
+                  (c'est indiqué sur votre facture).</li>
+              </ul>
+            </details>
+          </div>
+
+          <h2>2. Votre offre actuelle</h2>
+          <div class="grille-champs">
+            <label class="champ champ-large">
+              <span>Choisir dans le catalogue <small>(pré-remplit les prix, tarifs hors promotion)</small></span>
+              <select id="e-catalogue"></select>
+            </label>
+            <label class="champ" data-base>
+              <span>Prix du kWh <small>(€ TTC)</small></span>
+              <input id="e-kwh" type="number" min="0" step="0.0001" inputmode="decimal" placeholder="ex. 0,1952">
+            </label>
+            <label class="champ" data-hc>
+              <span>kWh heures pleines <small>(€ TTC)</small></span>
+              <input id="e-hp" type="number" min="0" step="0.0001" inputmode="decimal">
+            </label>
+            <label class="champ" data-hc>
+              <span>kWh heures creuses <small>(€ TTC)</small></span>
+              <input id="e-hc" type="number" min="0" step="0.0001" inputmode="decimal">
+            </label>
+            <label class="champ">
+              <span>Abonnement <small>(€ TTC / mois)</small></span>
+              <input id="e-abo" type="number" min="0" step="0.01" inputmode="decimal" placeholder="ex. 15,65">
+            </label>
+            <label class="champ champ-large">
+              <span>Ou : montant annuel réellement payé <small>(facultatif, remplace le calcul ci-dessus)</small></span>
+              <input id="e-total" type="number" min="0" step="1" inputmode="decimal" placeholder="ex. 1 100">
+            </label>
+          </div>
+
+          <h2>3. Vos préférences</h2>
+          <div class="prefs">
+            <label class="coche"><input type="checkbox" id="e-fixe"> Prix fixe uniquement (pas d'offre indexée)</label>
+            <label class="coche"><input type="checkbox" id="e-verte"> Énergie verte uniquement</label>
+            <label class="coche"><input type="checkbox" id="e-sans-engagement"> Sans engagement</label>
+          </div>
+        </form>
+
+        <section class="carte" aria-labelledby="titre-energie-resultats">
+          <div class="resultats-entete">
+            <h2 id="titre-energie-resultats">4. Meilleures offres du moment</h2>
+            <div class="reglages">
+              <label class="champ champ-inline">
+                <span>Trier par</span>
+                <select id="e-tri">
+                  <option value="an1">Coût de la 1re année</option>
+                  <option value="regime">Coût à partir de la 2e année</option>
+                </select>
+              </label>
+            </div>
+          </div>
+          <div id="e-resume"></div>
+          <ol id="e-resultats" class="resultats"></ol>
+          <p class="aide" id="e-maj"></p>
+        </section>
+      </div>
     </section>
 
     <!-- Vue : alertes -->
@@ -117,6 +237,8 @@
 
   <script src="data/offres-mobile.js"></script>
   <script src="data/offres-internet.js"></script>
+  <script src="data/offres-energie.js"></script>
+  <script src="js/energie.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
